@@ -6,7 +6,7 @@ from parking_spot import ParkingSpot
 class Coordinator:
     #Coordinator class will be where all components come together and the simulation is built
     def __init__(self):
-        return self
+        return None
     
     def initialize_pucks(self):
         #randomly determine the number of pucks between 1 and 9
@@ -26,7 +26,10 @@ class Coordinator:
         spots = []
 
         for i in range(len(coordinates)):
-            spot = ParkingSpot(position=coordinates[i], queue_idx=i)
+            if i == 0:
+                spot = ParkingSpot(position=coordinates[i], queue_idx=i, neighbor=None)
+            else:
+                spot = ParkingSpot(position=coordinates[i], queue_idx=i, neighbor=spots[-1])
             spots.append(spot)
         
         self.parking_spots = spots
@@ -35,4 +38,14 @@ class Coordinator:
         #move all pucks from their starting positions to the nearest parking spot
         for puck in self.pucks:
             puck.move_to_parking_spot(self.parking_spots)
+        
+    def close_parking_gaps(self):
+        #moves pucks so that there are no gaps between pucks in occupied parking spots
+        for puck in self.pucks:
+            if puck.parking_spot.neighbor is None:
+                continue #should skip call for top spot
+            while puck.parking_spot.neighbor.isempty():
+                puck.move_to_next_spot()
+                if puck.parking_spot.neighbor is None:
+                    break
         

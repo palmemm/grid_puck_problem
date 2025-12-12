@@ -5,6 +5,7 @@ class Puck:
     def __init__(self, position):
         self.position = position
         self.parking_spot = None
+        self.work_status = False
 
     def calculate_distance(self, coordinates):
         #calculates the euclidean distance between current position and another set of coordinates
@@ -30,6 +31,14 @@ class Puck:
                     min_distance = distance
                     parking_spot = spot
         
-        self.position = parking_spot.position
-        parking_spot.fill()
-        
+        self.position = parking_spot.position #Moves puck into the parking spot
+        self.parking_spot = parking_spot #Changes the associated parking spot to the parking spot
+        parking_spot.fill() #Marks the newly occupied spot as full
+    
+    def move_to_next_spot(self):
+        #Checks that the next parking spot is empty, then moves the puck from current spot to next spot
+        assert self.parking_spot.neighbor.isempty() == True
+        self.position = self.parking_spot.neighbor.position
+        self.parking_spot.empty() #Marks current spot as empty before it moves
+        self.parking_spot = self.parking_spot.neighbor #Moves to next spot
+        self.parking_spot.fill() #Marks new current spot as full

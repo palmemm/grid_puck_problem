@@ -1,8 +1,9 @@
 class ParkingSpot:
-    def __init__(self, position, queue_idx):
+    def __init__(self, position, queue_idx, neighbor):
         self.position = position
         self.status = 'empty'
         self.queue_idx = queue_idx
+        self.neighbor = neighbor #the following parking spot
     
     def isempty(self):
         if self.status == 'empty':
@@ -20,3 +21,9 @@ class ParkingSpot:
         #used when moving the pucks from original parking spots to back-to-back spots
         assert self.status == 'full'
         self.status = 'empty'
+
+    def check_next_status(self):
+        status = self.neighbor.isempty()
+        if status == True:
+            return 'empty'
+        return 'full'
