@@ -4,17 +4,19 @@ class ParkingSpot:
         self.status = 'empty'
         self.queue_idx = queue_idx
         self.neighbor = neighbor #the following parking spot
+        self.puck = None
     
     def isempty(self):
         if self.status == 'empty':
             return True
         return False
     
-    def fill(self):
+    def fill(self, puck):
         #changes the status of an empty parking spot to full. 
         #Used when a puck fills the spot for the first time
         assert self.status == 'empty'
         self.status = 'full'
+        self.puck = puck
 
     def empty(self):
         #changes status of a full parking spot to empty.
@@ -22,8 +24,4 @@ class ParkingSpot:
         assert self.status == 'full'
         self.status = 'empty'
 
-    def check_next_status(self):
-        status = self.neighbor.isempty()
-        if status == True:
-            return 'empty'
-        return 'full'
+    

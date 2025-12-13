@@ -2,10 +2,11 @@ import numpy as np
 
 class Puck:
 
-    def __init__(self, position):
+    def __init__(self, position, id):
         self.position = position
         self.parking_spot = None
         self.work_status = False
+        self.id = id
 
     def calculate_distance(self, coordinates):
         #calculates the euclidean distance between current position and another set of coordinates
@@ -33,7 +34,7 @@ class Puck:
         
         self.position = parking_spot.position #Moves puck into the parking spot
         self.parking_spot = parking_spot #Changes the associated parking spot to the parking spot
-        parking_spot.fill() #Marks the newly occupied spot as full
+        parking_spot.fill(self) #Marks the newly occupied spot as full
     
     def move_to_next_spot(self):
         #Checks that the next parking spot is empty, then moves the puck from current spot to next spot
@@ -41,4 +42,19 @@ class Puck:
         self.position = self.parking_spot.neighbor.position
         self.parking_spot.empty() #Marks current spot as empty before it moves
         self.parking_spot = self.parking_spot.neighbor #Moves to next spot
-        self.parking_spot.fill() #Marks new current spot as full
+        self.parking_spot.fill(self) #Marks new current spot as full
+
+    def Work(self):
+        #Black box work function
+        self.work_status = True
+
+    def pop(self):
+        #Remove puck from queue while work is being done
+        self.parking_spot.empty()
+        self.parking_spot = None
+        self.position = None
+
+    def reenter_queue(self, spot):
+        self.parking_spot = spot
+        spot.fill(self)
+        self.position = spot.position

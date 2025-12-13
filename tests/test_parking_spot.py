@@ -1,6 +1,6 @@
 import unittest
 from parking_spot import ParkingSpot
-from coordinator import Coordinator
+from simulator import Coordinator
 
 class TestParkingSpot(unittest.TestCase):
     def test_isempty(self):

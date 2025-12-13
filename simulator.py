@@ -1,0 +1,94 @@
+import random
+from puck import Puck
+from parking_spot import ParkingSpot
+
+class Simulator:
+    #Simulator class will be where all components come together and the simulation is built
+    def __init__(self):
+        return None
+    
+    def initialize_pucks(self):
+        #randomly determine the number of pucks between 1 and 9
+        n_pucks = random.randint(1,9)
+        pucks = [] #initiate a list containing the pucks
+        for i in range(n_pucks):
+            x_position = random.randint(0,480) #randomly assign x coordinate
+            y_position = random.randint(0,480) #randomly assign y coordinate
+            print('Initial Position for Puck ', i, 'set to: ', (x_position, y_position))
+            puck = Puck(position=(x_position,y_position), id=i) #initiate it as a member of Puck class
+            pucks.append(puck)
+        
+        self.pucks = pucks
+
+    def initialize_parking_spots(self):
+        #set parking spots to the given coordinates
+        coordinates = [(420,300), (300,300), (180,300), (180,180), (300,180), (420,180), (420,60), (300,60), (180, 60)]
+        spots = []
+
+        for i in range(len(coordinates)):
+            if i == 0:
+                spot = ParkingSpot(position=coordinates[i], queue_idx=i, neighbor=None)
+            else:
+                spot = ParkingSpot(position=coordinates[i], queue_idx=i, neighbor=spots[-1])
+            spots.append(spot)
+        
+        self.parking_spots = spots
+
+    def print_config(self):
+        conf = 'START -> '
+        for spot in reversed(self.parking_spots):
+            if spot.status == 'empty':
+                conf = conf + 'EMPTY -> '
+            else:
+                conf = conf + 'FULL - PUCK #' + str(spot.puck.id) + ' -> '
+        conf = conf + 'END'
+        print(conf)
+
+    def move_pucks_to_parking_spots(self):
+        #move all pucks from their starting positions to the nearest parking spot
+        for puck in self.pucks:
+            puck.move_to_parking_spot(self.parking_spots)
+            print('Moved puck ', puck.id, 'to parking spot ', puck.parking_spot.queue_idx, 'at: ', puck.position)
+        
+        print('Initial Configuration:')
+        self.print_config()
+        
+    def close_parking_gaps(self):
+        #moves pucks so that there are no gaps between pucks in occupied parking spots
+        for spot in self.parking_spots:
+            if spot.neighbor is None:
+                continue #skip call for top spot
+            puck = spot.puck
+            if not puck:
+                continue
+            while puck.parking_spot.neighbor.isempty():
+                puck.move_to_next_spot()
+                if puck.parking_spot.neighbor is None:
+                    break
+            if spot.position != puck.position:
+                print('Moved Puck ', puck.id, ' to ', puck.position)
+                self.print_config()
+        
+        print('All Gaps Filled')
+
+    def move_pucks_through_system(self):
+        print('--------BEGIN WORK--------')
+        while self.parking_spots[0].puck.work_status == False: #Perform work until the puck in the top spot is complete
+            puck = self.parking_spots[0].puck
+            puck.pop()
+            puck.Work()
+            print('Working on Puck #', str(puck.id))
+            if len(self.pucks) > 1:
+                self.close_parking_gaps() #Move the following pucks to the next positions
+
+            puck.reenter_queue(self.parking_spots[-1])
+            print('Puck #', str(puck.id), ' Finished. Reentering Queue.')
+            self.print_config()
+
+            print('Moving Puck #', str(puck.id), ' to the first open spot')
+            self.close_parking_gaps() #Move last puck to the first open spot
+
+        print('--------END WORK--------')
+
+        print('Final Configuration:')
+        self.print_config()
