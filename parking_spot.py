@@ -23,5 +23,6 @@ class ParkingSpot:
         #used when moving the pucks from original parking spots to back-to-back spots
         assert self.status == 'full'
         self.status = 'empty'
+        self.puck = None
 
     

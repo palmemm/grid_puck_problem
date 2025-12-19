@@ -55,18 +55,18 @@ class Simulator:
         
     def close_parking_gaps(self):
         #moves pucks so that there are no gaps between pucks in occupied parking spots
-        for spot in self.parking_spots:
+        for spot in self.parking_spots: #Loop through spots because they are stored in order of closest to farthest from END
             if spot.neighbor is None:
                 continue #skip call for top spot
             puck = spot.puck
             if not puck:
-                continue
+                continue #Skip to next spot if there is no puck in this spot
             while puck.parking_spot.neighbor.isempty():
                 puck.move_to_next_spot()
                 if puck.parking_spot.neighbor is None:
-                    break
-            if spot.position != puck.position:
-                print('Moved Puck ', puck.id, ' to ', puck.position)
+                    break #break the while loop if the puck's new parking spot doesn't have a neighbor (is the first spot)
+            if spot.position != puck.position: #If the spot's position is different from puck, then the puck has moved
+                print('Moved Puck ', puck.id, ' to Spot ', puck.parking_spot.queue_idx)
                 self.print_config()
         
         print('All Gaps Filled')
@@ -81,7 +81,7 @@ class Simulator:
             if len(self.pucks) > 1:
                 self.close_parking_gaps() #Move the following pucks to the next positions
 
-            puck.reenter_queue(self.parking_spots[-1])
+            puck.enter_queue(self.parking_spots[-1])
             print('Puck #', str(puck.id), ' Finished. Reentering Queue.')
             self.print_config()
 
