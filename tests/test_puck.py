@@ -42,6 +42,17 @@ class TestPuck(unittest.TestCase):
         self.assertEqual(puck.position[0], 420)
         self.assertEqual(puck.position[1], 60)
 
+    def test_move_to_next_spot_occupied_neighbor(self):
+        #Test that move_to_next_spot will fail if the neighbor is occupied
+        puck1 = Puck((300, 60), 0)
+        puck2 = Puck((420, 60), 1)
+        simulator = Simulator()
+        simulator.initialize_parking_spots()
+        puck2.enter_queue(simulator.parking_spots[7])
+        puck1.enter_queue(simulator.parking_spots[8])
+        with self.assertRaises(AssertionError):
+            puck1.move_to_next_spot()
+
     def test_Work(self):
         puck = Puck((250,50),0)
         puck.Work()
@@ -54,14 +65,22 @@ class TestPuck(unittest.TestCase):
         puck.move_to_parking_spot(parking_spots=simulator.parking_spots)
         parking_spot = puck.parking_spot
         puck.pop()
+        
         self.assertTrue(parking_spot.isempty())
         self.assertEqual(puck.position, None)
         self.assertEqual(puck.parking_spot, None)
 
-    def test_reenter_queue(self):
+    def test_enter_queue(self):
         puck = Puck((250,50),0)
         simulator = Simulator()
         simulator.initialize_parking_spots()
         puck.move_to_parking_spot(parking_spots=simulator.parking_spots)
         puck.pop()
-        puck.reenter_queue(simulator.parking_spots[-1])
+        spot = simulator.parking_spots[-1]
+        puck.enter_queue(spot)
+
+        self.assertEqual(puck.parking_spot, spot)
+        self.assertEqual(puck.position, spot.position)
+        self.assertFalse(spot.isempty())
+        self.assertEqual(spot.puck, puck)
+        self.assertEqual(spot.status, 'full')
