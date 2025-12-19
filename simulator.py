@@ -5,12 +5,12 @@ from parking_spot import ParkingSpot
 class Simulator:
     #Simulator class will be where all components come together and the simulation is built
     def __init__(self):
-        return None
+        pass
     
     def initialize_pucks(self):
         #randomly determine the number of pucks between 1 and 9
         n_pucks = random.randint(1,9)
-        pucks = [] #initiate a list containing the pucks
+        pucks = [] #initialize a list containing the pucks
         for i in range(n_pucks):
             x_position = random.randint(0,480) #randomly assign x coordinate
             y_position = random.randint(0,480) #randomly assign y coordinate
@@ -18,7 +18,7 @@ class Simulator:
             puck = Puck(position=(x_position,y_position), id=i) #initiate it as a member of Puck class
             pucks.append(puck)
         
-        self.pucks = pucks
+        self.pucks = pucks #stores list of pucks within simulator class
 
     def initialize_parking_spots(self):
         #set parking spots to the given coordinates
@@ -32,9 +32,10 @@ class Simulator:
                 spot = ParkingSpot(position=coordinates[i], queue_idx=i, neighbor=spots[-1])
             spots.append(spot)
         
-        self.parking_spots = spots
+        self.parking_spots = spots #stores list of parking spots within simulator class
 
     def print_config(self):
+        #Helper function to visualize the configuration of the pucks
         conf = 'START -> '
         for spot in reversed(self.parking_spots):
             if spot.status == 'empty':
@@ -57,7 +58,7 @@ class Simulator:
         #moves pucks so that there are no gaps between pucks in occupied parking spots
         for spot in self.parking_spots: #Loop through spots because they are stored in order of closest to farthest from END
             if spot.neighbor is None:
-                continue #skip call for top spot
+                continue #skip call for top spot that doesn't have a Neighbor
             puck = spot.puck
             if not puck:
                 continue #Skip to next spot if there is no puck in this spot
@@ -65,13 +66,14 @@ class Simulator:
                 puck.move_to_next_spot()
                 if puck.parking_spot.neighbor is None:
                     break #break the while loop if the puck's new parking spot doesn't have a neighbor (is the first spot)
-            if spot.position != puck.position: #If the spot's position is different from puck, then the puck has moved
+            if spot.position != puck.position: #If the spot's position (from the beginning of the for loop) is different from puck (after while loop), then the puck has moved
                 print('Moved Puck ', puck.id, ' to Spot ', puck.parking_spot.queue_idx)
                 self.print_config()
         
         print('All Gaps Filled')
 
     def move_pucks_through_system(self):
+        #Runs the simulator to have Work done on all pucks
         print('--------BEGIN WORK--------')
         while self.parking_spots[0].puck.work_status == False: #Perform work until the puck in the top spot is complete
             puck = self.parking_spots[0].puck

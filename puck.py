@@ -4,12 +4,13 @@ class Puck:
 
     def __init__(self, position, id):
         self.position = position #coordinates on the grid
-        self.parking_spot = None #parking spot the puck currently lives in
+        self.parking_spot = None #parking spot the puck currently lives in, None on initialization and during Work
         self.work_status = False #True/False if the puck has been worked on yet
         self.id = id #Puck numerical id 0-8
 
     def calculate_distance(self, coordinates):
-        #calculates the euclidean distance between current position and another set of coordinates
+        #calculates the euclidean distance between current position and another set of coordinates. 
+        #If worried about collisions, could use Manhattan distance to traverse grid
         x1 = self.position[0]
         y1 = self.position[1]
         
@@ -48,7 +49,7 @@ class Puck:
         self.position = self.parking_spot.neighbor.position
         self.parking_spot.empty() #Marks current spot as empty before it moves
         self.parking_spot = self.parking_spot.neighbor #Moves to next spot
-        self.parking_spot.fill(self) #Marks new current spot as full
+        self.parking_spot.fill(self) #Fills new current spot
 
     def Work(self):
         #Black box work function, just changes status to True

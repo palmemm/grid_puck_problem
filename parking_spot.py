@@ -1,26 +1,25 @@
 class ParkingSpot:
     def __init__(self, position, queue_idx, neighbor):
-        self.position = position
-        self.status = 'empty'
-        self.queue_idx = queue_idx
+        self.position = position #coordinates on the grid
+        self.status = 'empty' #Puck status - full or empty
+        self.queue_idx = queue_idx #index in the queue - 0 at END, 8 at START
         self.neighbor = neighbor #the following parking spot
-        self.puck = None
+        self.puck = None #Puck that occupies the spot. None if no puck is occupying the spot
     
     def isempty(self):
+        #Checks if the parking spot status is empty, returns True if empty
         if self.status == 'empty':
             return True
         return False
     
     def fill(self, puck):
         #changes the status of an empty parking spot to full. 
-        #Used when a puck fills the spot for the first time
         assert self.status == 'empty'
         self.status = 'full'
         self.puck = puck
 
     def empty(self):
         #changes status of a full parking spot to empty.
-        #used when moving the pucks from original parking spots to back-to-back spots
         assert self.status == 'full'
         self.status = 'empty'
         self.puck = None

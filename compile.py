@@ -7,7 +7,6 @@ def complete_simulation(simulation):
     simulation.close_parking_gaps()
     simulation.move_pucks_through_system()
 
-
 simulation = Simulator()
 
 complete_simulation(simulation)
